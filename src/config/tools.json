@@ -1,29 +1,54 @@
 {
   "tools": [
     {
-      "id": "sample-tool",
-      "name": "Sample Tool",
-      "description": "A sample tool to demonstrate the workflow app. Replace this with your actual n8n workflows.",
-      "icon": "Wrench",
-      "webhookUrl": "https://n8n.srv1300789.hstgr.cloud/webhook/sample",
+      "id": "product-research-banners",
+      "name": "Product Research + Banners",
+      "description": "AI-powered product research and banner generation for marketing campaigns",
+      "icon": "Sparkles",
+      "webhookUrl": "https://n8n.srv1300789.hstgr.cloud/webhook/f1f3c702-da9e-4bcf-8544-8c32f650194e",
       "inputs": [
         {
-          "name": "message",
-          "label": "Message",
+          "name": "product_name",
+          "label": "Product Name",
           "type": "text",
-          "placeholder": "Enter a message to send to the workflow",
-          "required": true
+          "required": false
         },
         {
-          "name": "priority",
-          "label": "Priority",
-          "type": "select",
-          "options": [
-            { "value": "low", "label": "Low" },
-            { "value": "medium", "label": "Medium" },
-            { "value": "high", "label": "High" }
-          ],
-          "required": true
+          "name": "niche",
+          "label": "Niche",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "country",
+          "label": "Country",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "language",
+          "label": "Language",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "amazon_link",
+          "label": "Amazon Link",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "competitors_link_#1",
+          "label": "Competitors Link #1",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "product_image",
+          "label": "Product image",
+          "type": "text",
+          "required": false,
+          "placeholder": "URL to product image"
         }
       ]
     }
