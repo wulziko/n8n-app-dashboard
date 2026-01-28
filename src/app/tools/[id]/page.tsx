@@ -18,7 +18,7 @@ export default function ToolPage() {
   const [result, setResult] = useState<WebhookResponse | null>(null);
 
   const toolId = Array.isArray(params.id) ? params.id[0] : params.id;
-  const tool = toolsConfig.tools.find((t: Tool) => t.id === toolId) as Tool | undefined;
+  const tool = toolsConfig.tools.find((t) => t.id === toolId) as Tool | undefined;
 
   if (!tool) {
     return (

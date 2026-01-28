@@ -12,7 +12,7 @@ export async function POST(
     const body = await request.json();
 
     // Find the tool in config
-    const tool = toolsConfig.tools.find((t: Tool) => t.id === id);
+    const tool = toolsConfig.tools.find((t) => t.id === id) as Tool | undefined;
 
     if (!tool) {
       return NextResponse.json(
