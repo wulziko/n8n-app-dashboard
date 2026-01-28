@@ -3,7 +3,7 @@ import { WebhookResponse } from '@/types/tool';
 export async function callN8nWebhook(
   webhookUrl: string,
   data: Record<string, any>,
-  timeoutMs: number = 300000
+  timeoutMs: number = 1200000
 ): Promise<WebhookResponse> {
   try {
     const controller = new AbortController();

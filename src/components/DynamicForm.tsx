@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2 } from 'lucide-react';
+import { ProgressLoader } from '@/components/ProgressLoader';
 
 interface DynamicFormProps {
   tool: Tool;
@@ -156,16 +156,18 @@ export function DynamicForm({ tool, onSubmit, isLoading }: DynamicFormProps) {
         </div>
       ))}
 
-      <Button type="submit" disabled={isLoading} className="w-full">
-        {isLoading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Running...
-          </>
-        ) : (
-          `Run ${tool.name}`
-        )}
-      </Button>
+      {!isLoading && (
+        <Button type="submit" className="w-full">
+          Run {tool.name}
+        </Button>
+      )}
+
+      {isLoading && (
+        <ProgressLoader
+          isActive={isLoading}
+          estimatedDuration={600000}
+        />
+      )}
     </form>
   );
 }
