@@ -1,0 +1,76 @@
+{
+  "name": "Test Upload Image Only",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "test-upload-image",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        250,
+        300
+      ],
+      "id": "webhook-1",
+      "name": "Webhook",
+      "webhookId": "test-upload-image-123"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Simple test - just extract body data\nconst body = $input.first().json.body;\n\nreturn {\n  json: {\n    success: true,\n    product_image_url: \"https://via.placeholder.com/500\",\n    product_name: body.product_name || \"No name\",\n    received_image: !!body.product_image,\n    image_length: (body.product_image || \"\").length\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        450,
+        300
+      ],
+      "id": "upload-1",
+      "name": "Upload Image Test"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        650,
+        300
+      ],
+      "id": "respond-1",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Upload Image Test",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Image Test": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

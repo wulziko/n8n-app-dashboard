@@ -397,7 +397,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Get the product_image base64 string from the webhook\nconst productImageBase64 = $input.first().json.product_image;\n\nif (!productImageBase64) {\n  throw new Error('No product_image found in webhook body');\n}\n\n// Remove data:image prefix if present\nconst base64Data = productImageBase64.includes(',') \n  ? productImageBase64.split(',')[1] \n  : productImageBase64;\n\n// Prepare the imgBB upload request\nconst imgbbApiKey = 'd9766561db157236cc9151bb08020768';\nconst uploadUrl = `https://api.imgbb.com/1/upload?key=${imgbbApiKey}`;\n\n// Make the upload request\nconst response = await this.helpers.httpRequest({\n  method: 'POST',\n  url: uploadUrl,\n  headers: {\n    'Content-Type': 'application/x-www-form-urlencoded'\n  },\n  body: `image=${encodeURIComponent(base64Data)}`\n});\n\nif (!response.data || !response.data.url) {\n  throw new Error('Failed to upload image to imgBB');\n}\n\n// Return the uploaded image URL along with all other fields\nreturn {\n  json: {\n    product_image_url: response.data.url,\n    product_name: $input.first().json.product_name,\n    niche: $input.first().json.niche,\n    country: $input.first().json.country,\n    language: $input.first().json.language,\n    amazon_link: $input.first().json.amazon_link,\n    competitors_link_1: $input.first().json.competitors_link_1\n  }\n};"
+        "jsCode": "// Simple test - just pass through data without calling imgBB\nconst body = $input.first().json.body;\n\nreturn {\n  json: {\n    product_image_url: \"https://via.placeholder.com/500\",\n    product_name: body.product_name || \"Test Product\",\n    niche: body.niche || \"Test\",\n    country: body.country || \"US\",\n    language: body.language || \"English\",\n    amazon_link: body.amazon_link || \"\",\n    competitors_link_1: body.competitors_link_1 || \"\"\n  }\n};"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -619,7 +619,6 @@
       ]
     }
   },
-  "active": true,
   "settings": {
     "executionOrder": "v1",
     "callerPolicy": "workflowsFromSameOwner",
@@ -627,7 +626,5 @@
   },
   "staticData": {
     "node:ClickUp Trigger": {}
-  },
-  "tags": [],
-  "pinData": {}
+  }
 }

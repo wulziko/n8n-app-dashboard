@@ -1,0 +1,76 @@
+{
+  "name": "\u2714\ufe0fPOC Stage: Product Research + Banners - KIE.AI - webapp (MINIMAL TEST)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ccbf1e03-2ef5-410a-8e81-03f8b1355393",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        250,
+        300
+      ],
+      "id": "webhook-test-1",
+      "name": "Webhook",
+      "webhookId": "ccbf1e03-2ef5-410a-8e81-03f8b1355393"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Simple test - just return the input\nconst input = $input.first().json;\n\nreturn {\n  json: {\n    success: true,\n    message: 'Webhook received!',\n    received_fields: Object.keys(input),\n    product_name: input.product_name,\n    has_image: !!input.product_image\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        450,
+        300
+      ],
+      "id": "test-code-1",
+      "name": "Test Code"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        650,
+        300
+      ],
+      "id": "respond-test-1",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Test Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test Code": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
