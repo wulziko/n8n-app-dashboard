@@ -31,8 +31,17 @@ export async function POST(
       }
     }
 
+    // Transform file uploads: extract base64 for n8n
+    const webhookData = { ...body };
+    tool.inputs.forEach((input) => {
+      if (input.type === 'file' && body[input.name]?.base64) {
+        // n8n expects just the base64 data string for file fields
+        webhookData[input.name] = body[input.name].base64;
+      }
+    });
+
     // Call the n8n webhook
-    const result = await callN8nWebhook(tool.webhookUrl, body);
+    const result = await callN8nWebhook(tool.webhookUrl, webhookData);
 
     if (!result.success) {
       return NextResponse.json(

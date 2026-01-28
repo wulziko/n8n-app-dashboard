@@ -45,10 +45,9 @@
         },
         {
           "name": "product_image",
-          "label": "Product image",
-          "type": "text",
-          "required": false,
-          "placeholder": "URL to product image"
+          "label": "Product Image",
+          "type": "file",
+          "required": false
         }
       ]
     }
