@@ -5,7 +5,7 @@
       "name": "Product Research + Banners",
       "description": "AI-powered product research and banner generation for marketing campaigns",
       "icon": "Sparkles",
-      "webhookUrl": "https://n8n.srv1300789.hstgr.cloud/webhook/f1f3c702-da9e-4bcf-8544-8c32f650194e",
+      "webhookUrl": "https://n8n.srv1300789.hstgr.cloud/webhook/ccbf1e03-2ef5-410a-8e81-03f8b1355393",
       "inputs": [
         {
           "name": "product_name",
