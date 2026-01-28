@@ -34,6 +34,48 @@ A simple web portal for **manually triggering** your n8n workflows. Instead of w
 - **shadcn/ui** - Components
 - **Vercel** - Hosting
 
+## Claude Code Tools & Skills
+
+This project works best with the following MCP servers and skills configured in Claude Code:
+
+### MCP Servers
+
+**n8n-MCP** - Interact with n8n workflows directly
+- Repository: https://github.com/czlonkowski/n8n-mcp
+- n8n Instance: https://n8n.srv1300789.hstgr.cloud
+- Use this to: Inspect workflows, test webhooks, debug workflow issues
+
+**GitHub MCP** - Manage GitHub repository operations
+- Repository: https://github.com/github/github-mcp-server
+- Use this to: Push code, create PRs, manage issues
+
+### Skills
+
+**n8n-skills** - Specialized operations for n8n workflows
+- Repository: https://github.com/czlonkowski/n8n-skills
+- Use this to: Workflow automation tasks
+
+**frontend-design** - UI/UX design assistance
+- Documentation: https://github.com/anthropics/claude-code/blob/main/plugins/frontend-design/skills/frontend-design/SKILL.md
+- Use this to: Generate and improve UI components
+
+### The 3-Step Protocol for Adding Tools
+
+1. **Analyze (n8n-MCP)**
+   - Use n8n-MCP to inspect the workflow
+   - Verify it has Webhook Trigger and Respond to Webhook nodes
+   - Identify input/output schema
+
+2. **Configure (tools.json)**
+   - Add tool configuration to `src/config/tools.json`
+   - Map workflow inputs to form fields
+   - Test locally with `npm run dev`
+
+3. **Deploy (GitHub MCP)**
+   - Push code to GitHub
+   - Vercel auto-deploys
+   - Test in production
+
 ## Deciding Which Workflows to Add
 
 **Add to web app if:**
