@@ -1,0 +1,597 @@
+{
+  "name": "\u2714\ufe0fPOC Stage: Product Research + Banners - KIE.AI - webapp (Web App Ready)",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "comment",
+        "commentOn": "task",
+        "id": "={{ $('Get a task').item.json.id }}",
+        "commentText": "=\n`\n\ud83e\udd16 **AI INTELLIGENCE REPORT**\n\n___________________________________________________\n\ud83d\udcca **PART 1: DEEP MARKET RESEARCH**\n___________________________________________________\n\n\n\n{{ $('HTTP Request - AI Research').item.json.output }}\n",
+        "additionalFields": {}
+      },
+      "id": "a8263ea2-4cac-4b6f-8b5a-61c0e19e15d2",
+      "name": "ClickUp - Post Comment with Research",
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        912,
+        960
+      ],
+      "credentials": {
+        "clickUpApi": {
+          "id": "cRXde0yteyWiEe3c",
+          "name": "ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('Get a task').item.json.id }}",
+        "updateFields": {
+          "status": "creative production"
+        }
+      },
+      "id": "8fea7a78-cd96-433d-962b-4ba0f2501b33",
+      "name": "ClickUp - Update Status to Creative Production",
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        960
+      ],
+      "credentials": {
+        "clickUpApi": {
+          "id": "cRXde0yteyWiEe3c",
+          "name": "ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "team": "9018632684",
+        "space": "90188823804",
+        "folder": "901810849283",
+        "list": "901814441234",
+        "returnAll": false,
+        "limit": 1,
+        "filters": {
+          "statuses": [
+            "ready"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        960
+      ],
+      "id": "e2943d0f-fe46-4b3a-b163-81071be43ae1",
+      "name": "Get many tasks",
+      "credentials": {
+        "clickUpApi": {
+          "id": "cRXde0yteyWiEe3c",
+          "name": "ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('Get a task').first().json.id }}",
+        "updateFields": {
+          "status": "review"
+        }
+      },
+      "id": "7def6ee3-8163-4d66-8e40-12f57e4c4e51",
+      "name": "ClickUp - Update Status to Review",
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        1456
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "clickUpApi": {
+          "id": "cRXde0yteyWiEe3c",
+          "name": "ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get the Research Output (Universal Selector)\nconst item = $input.first();\nconst researchInput = \n  item.json.content ||\n  item.json.text ||\n  item.json.message?.content ||\n  item.json.output ||\n  item.json.choices?.[0]?.message?.content ||\n  \"\";\n\n// 2. Get Fields from Upload Image node (web app data source)\nconst uploadData = $(\"Upload Image to imgBB\").first().json;\nconst getField = (name) => {\n  const fieldMap = {\n    'Language': uploadData.language || 'English',\n    'Country': uploadData.country || 'Global',\n    'Niche': uploadData.niche || 'General',\n    'Gender': uploadData.gender || 'All',\n    'Product Name': uploadData.product_name || ''\n  };\n  return fieldMap[name] || '';\n};\n\n// 3. Extraction Helper\nfunction extractSection(text, sectionName) {\n  if (!text) return '';\n  const regex = new RegExp(`===\\\\s*${sectionName}\\\\s*===([\\\\s\\\\S]*?)(?:===|$)`, 'i');\n  const match = text.match(regex);\n  return match ? match[1].trim() : '';\n}\n\n// 4. Helper to extract labeled subsections\nfunction extractSubfield(text, label) {\n  if (!text) return '';\n  const regex = new RegExp(`\\\\*\\\\*${label}(?::|\\\\s*:)?\\\\*\\\\*\\\\s*([^\\\\*\\\\n]+(?:\\\\n(?!\\\\*\\\\*)[^\\\\n]+)*)`, 'i');\n  const match = text.match(regex);\n  return match ? match[1].trim() : '';\n}\n\n// 5. Helper to extract numbered hooks\nfunction extractHooks(text) {\n  const hooks = {};\n  if (!text) return hooks;\n  \n  const hookTypes = ['Problem-Agitate', 'Curiosity', 'Social Proof', 'Benefit-First', 'Urgency'];\n  \n  hookTypes.forEach((type) => {\n    const regex = new RegExp(`\\\\d+\\\\.\\\\s*\\\\*\\\\*\\\\[?${type}\\\\]?:?\\\\*\\\\*:?\\\\s*(.+?)(?=\\\\d+\\\\.|$)`, 'is');\n    const match = text.match(regex);\n    hooks[type.toLowerCase().replace(/[- ]/g, '_')] = match ? match[1].trim() : '';\n  });\n  \n  return hooks;\n}\n\n// 6. Extract All Sections\nconst productAnalysis = extractSection(researchInput, 'PRODUCT_ANALYSIS');\nconst competitiveEdge = extractSection(researchInput, 'COMPETITIVE_EDGE');\nconst emotionalTransformation = extractSection(researchInput, 'EMOTIONAL_TRANSFORMATION');\nconst visualAnchor = extractSection(researchInput, 'VISUAL_ANCHOR');\nconst visualDirection = extractSection(researchInput, 'VISUAL_DIRECTION');\nconst painPoints = extractSection(researchInput, 'PAIN_POINTS');\nconst socialProofAngles = extractSection(researchInput, 'SOCIAL_PROOF_ANGLES');\nconst hookVariations = extractSection(researchInput, 'HOOK_VARIATIONS');\n\n// 7. Extract Subfields\nconst beforeState = extractSubfield(emotionalTransformation, 'Before State');\nconst afterState = extractSubfield(emotionalTransformation, 'After State');\nconst lifestyleContext = extractSubfield(visualDirection, 'Lifestyle Context');\nconst colorPsychology = extractSubfield(visualDirection, 'Color Psychology');\nconst compositionStyle = extractSubfield(visualDirection, 'Composition Style');\n\n// 8. Extract Hooks\nconst hooks = extractHooks(hookVariations);\n\nreturn {\n  json: {\n    // Core Product Info\n    product_summary: productAnalysis || \"Product summary not available\",\n    product_visual_description: visualAnchor || \"Product\",\n    competitive_edge: competitiveEdge || \"\",\n    \n    // Emotional Angles\n    emotional_before: beforeState || \"\",\n    emotional_after: afterState || \"\",\n    pain_points: painPoints || \"General pain points\",\n    \n    // Visual Direction\n    lifestyle_context: lifestyleContext || \"\",\n    color_psychology: colorPsychology || \"\",\n    composition_style: compositionStyle || \"\",\n    \n    // Social Proof\n    social_proof_angles: socialProofAngles || \"\",\n    \n    // Hook Variations\n    hook_problem_agitate: hooks.problem_agitate || \"\",\n    hook_curiosity: hooks.curiosity || \"\",\n    hook_social_proof: hooks.social_proof || \"\",\n    hook_benefit_first: hooks.benefit_first || \"\",\n    hook_urgency: hooks.urgency || \"\",\n    all_hooks: hookVariations || \"\",\n    \n    // Context Variables (from web app)\n    language: getField('Language'),\n    country: getField('Country'),\n    niche: getField('Niche'),\n    gender: getField('Gender'),\n    product_name: getField('Product Name')\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1744,
+        576
+      ],
+      "id": "313bfb43-3308-4fa6-9ed3-6358091c674c",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get Creative Summary output - try multiple possible paths\nconst summaryNode = $('Creative Summary').first();\nconst rawOutput = summaryNode.json.output || summaryNode.json.text || summaryNode.json.content || JSON.stringify(summaryNode.json);\n\nif (!rawOutput) {\n  throw new Error('Could not find output from Creative Summary node');\n}\n\nconsole.log('Raw output preview:', rawOutput.substring(0, 200));\n\n// Get language from Code in JavaScript4\nconst language = $('Code in JavaScript4').first().json.language || 'English';\n\n// Parse markdown concepts - match \"## Concept X:\" pattern\nfunction parseMarkdownConcepts(markdown) {\n  const concepts = [];\n  const conceptRegex = /##\\s*Concept\\s*(\\d+):[^\\n]*/gi;\n  const matches = [...markdown.matchAll(conceptRegex)];\n  \n  if (matches.length === 0) {\n    console.log('No concept headers found. Trying split method...');\n    // Fallback: split by \"Concept\" keyword\n    const parts = markdown.split(/Concept\\s*\\d+:/i);\n    if (parts.length > 1) {\n      for (let i = 1; i < Math.min(11, parts.length); i++) {\n        concepts.push({\n          concept_number: i,\n          headline: `Concept ${i}`,\n          body: parts[i].substring(0, 500).trim(),\n          visual_brief: parts[i].substring(0, 1000).trim(),\n          language: language\n        });\n      }\n    }\n    return concepts;\n  }\n  \n  for (let i = 0; i < matches.length; i++) {\n    const match = matches[i];\n    const conceptNum = parseInt(match[1]);\n    const startIdx = match.index;\n    const endIdx = i < matches.length - 1 ? matches[i + 1].index : markdown.length;\n    const conceptBlock = markdown.substring(startIdx, endIdx).trim();\n    \n    // Extract sections\n    const headlineMatch = conceptBlock.match(/Headline:\\s*([^\\n]+)/i);\n    const bodyMatch = conceptBlock.match(/Body:\\s*([^\\n]+(?:\\n(?!Visual Brief)[^\\n]+)*)/i);\n    const visualMatch = conceptBlock.match(/Visual Brief[^:]*:\\s*([\\s\\S]+?)(?=##|$)/i);\n    \n    concepts.push({\n      concept_number: conceptNum,\n      headline: headlineMatch ? headlineMatch[1].trim() : `Concept ${conceptNum}`,\n      body: bodyMatch ? bodyMatch[1].trim() : '',\n      visual_brief: visualMatch ? visualMatch[1].trim() : '',\n      language: language\n    });\n  }\n  \n  return concepts;\n}\n\nconst concepts = parseMarkdownConcepts(rawOutput);\n\nif (concepts.length === 0) {\n  throw new Error(`No concepts found. Output sample: ${rawOutput.substring(0, 500)}`);\n}\n\nconsole.log(`Successfully parsed ${concepts.length} concepts`);\n\n// Return as separate items for banner generation\nreturn concepts.map(c => ({ json: c }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1584,
+        960
+      ],
+      "id": "cbd20f72-3715-44f9-8977-fd3bad92ae59",
+      "name": "Splitter Concepts"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Synthesize the following research into exactly 10 high-converting ad concepts using the Frameworks defined in the System Prompt. These will be tested to identify 2-3 winners that will then be iterated 50-100 times. Use the tool if needed.\nCRITICAL FOR HEBREW:\nIf language = Hebrew, you must write in \"Native Israeli\" style.\n\nUse direct, \"Dugri\" language.\nAvoid formal/academic Hebrew.\nUse active verbs (e.g., instead of \"\u05d4\u05de\u05d5\u05e6\u05e8 \u05e2\u05d5\u05d6\u05e8 \u05dc...\", use \"\u05ea\u05ea\u05d7\u05d9\u05dc\u05d5 \u05dc\u05d4\u05e8\u05d2\u05d9\u05e9...\").\nEnsure grammar is 100% correct for the Israeli market context.\n\n=== LANGUAGE & NICHE ===\n\nLanguage for Copy: {{ $json.language }}\nProduct Niche: {{ $json.niche }}\n\n=== CORE PRODUCT INFO ===\n\nProduct Summary: {{ $json.product_summary }}\nCompetitive Edge (USPs): {{ $json.competitive_edge }}\n\n=== EMOTIONAL ANGLES ===\n\nCustomer Before State: {{ $json.emotional_before }}\nCustomer After State: {{ $json.emotional_after }}\nKey Pain Points: {{ $json.pain_points }}\n\n=== VISUAL & HOOK INPUTS ===\n\nProduct Visual Description: {{ $json.product_visual_description }}\nLifestyle Context for Visuals: {{ $json.lifestyle_context }}\nColor Psychology for Visuals: {{ $json.color_psychology }}\nComposition Style for Visuals: {{ $json.composition_style }}\nAvailable Social Proof: {{ $json.social_proof_angles }}\nHook Variations (Distribute across frameworks): {{ $json.all_hooks }}\n\nALLOCATION STRATEGY (70/20/10 Rule):\n\nConcepts 1-7 (70%): Use proven framework patterns from top-performing Meta ads\nConcepts 8-9 (20%): Adjacent variations - one step removed from proven concepts\nConcept 10 (10%): Wild experimental swing for potential home run\n\nFINAL INSTRUCTION: Each concept must be COMPLETELY different (Visual + Copy + Angle) to maximize algorithmic diversity. Meta's algorithm finds audiences based on creative\u2014give it maximum variety to test.",
+        "options": {
+          "systemMessage": "You are an elite-tier Meta Ads Creative Director and Direct Response Copywriter specializing in 2026 E-commerce trends. Your mission: generate 10 distinct test concepts designed to identify 2-3 winners that will drive MAXIMUM SALES through ASC campaigns.\nYOUR STRATEGIC FRAMEWORK (Based on $200M+ Ad Spend Analysis):\nTHE 7 PROVEN FRAMEWORKS (70% - Concepts 1-7):\n\nThe Specific Data Point: Lead with the ONE number/stat that tells the most compelling story (e.g., \"47% reduction in 14 days\" not generic claims)\nThe Call-Out (Problem-Agitate): Directly address the hidden/embarrassing pain point they won't admit publicly\nThe Scientific Mechanism (Curiosity): Explain the \"why it works\" with specific proprietary technology/ingredient - create intrigue that demands resolution\nThe Authority/Social Proof: Use specific customer quotes that address the #1 objection to purchase\nThe \"Us vs. Them\" (Benefit-First): Visually contrast product against failed traditional methods\nThe Before/After Transformation: Show the emotional journey from problem to solution - build the narrative arc visually\nThe New Standard (Category Creation): Frame product as the essential industry shift they're missing\n\nTHE 2 ADJACENT FRAMEWORKS (20% - Concepts 8-9):\n8. The Unusual Use Case: Show the product solving an unexpected problem in the niche\n9. The Reverse Psychology: Address why customers DON'T need this (then flip it)\nTHE 1 EXPERIMENTAL SWING (10% - Concept 10):\n10. Your wildest, most creative concept: Break conventions while staying brand-safe\n\nCORE SALES-DRIVING PRINCIPLES:\nCopy Rules:\n\nThe First 0.5 Seconds Win or Lose: Front-load the highest-impact hook with immediate intrigue\nOpen Loop Principle: The headline must create a question the body answers - never give everything away in the headline\nOne Claim Per Ad: Single-minded propositions only. No kitchen sink.\nSpeak Results, Not Features: \"You'll feel X\" not \"It has Y technology\"\nUse Relatable Comparisons: \"$40 saved = 9 months of coffee\" beats \"20% off\"\nCustomer Voice > Brand Voice: Let proof do the talking\nDeliver on the Promise: Whatever the headline promises, the body must pay off\n\nVisual Rules for Banner AI:\n\nVisual Micro-Hook Required: Include one unexpected, organic element that feels \"real\" (e.g., caught mid-motion, natural imperfection, candid moment - NOT staged perfection)\nShow ONLY the product - no packaging, boxes, cables, or accessories\nProduct must be hero - 60-70% of frame minimum\nSpecify ethnicity/skin tone for every person shown (algorithm optimization)\nHigh contrast backgrounds - product must pop in 0.5 seconds of scroll\nNo text overlays on image - let Meta's dynamic text system work\nLifestyle context must be specific - \"Morning bathroom counter with natural window light\" not \"bathroom\"\nVisual storytelling: The image should hint at a story or transformation without words\n\nMeta 2026 Algorithm Rules:\n\nEach concept = Different audience targeting: Don't create 10 variants of the same angle\nCreative IS the targeting: The image/copy combo determines who sees it\nDiverse concepts = Higher total spend: One concept at 2x ROAS spending $100K + Another at 7x ROAS spending $3K = Both winners\nNever kill profitable ads: Even 2x ROAS ads scale if that's above your breakeven\n\nBANNED ELEMENTS (Immediate Disqualification):\n\n\u274c Prices, discounts, percentage-off claims\n\u274c Seasonal/holiday references\n\u274c Generic claims (\"best,\" \"amazing,\" \"revolutionary\" without proof)\n\u274c Multiple products in one image\n\u274c Packaging/boxes visible in frame\n\u274c Headlines that close the loop completely (must build intrigue)\n\u274c Overly polished/staged visuals (need organic \"micro-hook\" element)\n\nHEBREW LANGUAGE QUALITY ASSURANCE:\nIf language = Hebrew, you MUST perform these checks before finalizing each concept:\n\nGrammar Check: Verify all Hebrew grammar is 100% correct for native Israeli speakers\n\nCheck verb conjugations match gender/number\nVerify adjective agreements\nEnsure proper use of prefixes (\u05d4, \u05d1, \u05dc, \u05de, etc.)\n\n\nNo Text Duplication: NEVER repeat the same sentence or phrase twice in the headline or body\n\nIf you accidentally write the same line twice, DELETE one immediately\nEach sentence must be unique\n\n\nNative Israeli Tone Check:\n\nDoes this sound like a real Israeli speaking \"Dugri\"?\nWould a native speaker actually say this, or does it sound translated?\nRemove any overly formal or academic phrasing\n\n\nFinal Read-Through: Read the entire concept out loud (mentally) in Hebrew\n\nDoes it flow naturally?\nAre there any awkward constructions?\nDoes the message land clearly and directly?\n\n\n\nIf ANY of these checks fail, rewrite that part before outputting the concept.\n**BANNER-SPECIFIC VISUAL BRIEF RULES:**\n\nWhen creating Visual Briefs for banner generation, follow these constraints:\n\n1. **Maximum 3 sentences** - Banner generators can't handle complex narratives\n2. **Core elements only:**\n   - Person description (age, skin tone, basic features)\n   - Product position (holding, wearing, displaying)\n   - Background setting (one simple environment)\n   - Lighting (one lighting condition)\n   \n3. **Avoid storytelling details** like:\n   - Micro-hooks with props (coffee mugs, magazines, etc.)\n   - Complex emotional narratives\n   - Multi-element compositions\n   - Specific hand gestures or movements\n\n4. **Banner brief structure:**\n   \"[Person description] [doing simple action with product]. [Simple background]. [Lighting]. [Product prominence].\"\n\n**Example of TOO COMPLEX (don't do this):**\n\"Show a medium-skinned Israeli woman lying on a modern grey couch in a clean, minimalist living room, wearing the illuminated LED mask in glowing blue light while casually scrolling on her phone. The visual micro-hook: a half-empty coffee mug sits precariously on the couch armrest...\"\n\n**Example of BANNER-APPROPRIATE (do this):**\n\"Israeli woman with medium skin lying on grey couch wearing illuminated LED mask in blue light. Minimalist living room background. Soft natural afternoon light. Mask prominent in center frame.\"\n\nOUTPUT FORMAT:\nReturn ONLY exactly 10 concepts in Markdown. No preamble, no conclusion.\nConcept 1: [Framework Name] - PROVEN\nHeadline: [Under 10 words - Create an open loop that the body will close]\nBody: [1-2 sentences maximum - Deliver on the headline promise while focusing on single transformation]\nVisual Brief for Banner AI: [One detailed paragraph: Must include (1) a visual micro-hook element (organic/candid moment), (2) specific skin tone/ethnicity, (3) precise lifestyle context, (4) color psychology rationale, and (5) composition style. The visual should support the narrative arc from problem to hint of solution. Must end with: \"Show ONLY the product - no boxes, packaging, or accessories. No text overlay on image.\"]\n\nConcept 2: [Framework Name] - PROVEN\nHeadline: [Under 10 words - Build intrigue]\nBody: [1-2 sentences - Pay off the promise]\nVisual Brief for Banner AI: [Detailed paragraph with visual micro-hook + mandatory product-only rule]\n\n(Repeat structure for Concepts 3-10, marking Concepts 1-7 as \"PROVEN\", 8-9 as \"ADJACENT\", and 10 as \"EXPERIMENTAL\")\n\nCRITICAL REMINDER: Your goal is to identify 2-3 winners from these 10. The winners will then be iterated 100+ times (filter changes, hook swaps, background variations, headline tests). Make each of these 10 DRAMATICALLY different so Meta's algorithm can find the best performing angles. Each concept should create intrigue in the headline that gets paid off in the body - never give away the entire story upfront. Diversity > Similarity."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1904,
+        576
+      ],
+      "id": "4fdca287-eb55-4681-8697-9cd1521ef074",
+      "name": "Creative Summary"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.5",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1792,
+        784
+      ],
+      "id": "87709517-2838-458f-8fb1-696428ddca6a",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "OVX8eS7SZ6koYGGB",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-3-pro-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        784
+      ],
+      "id": "5f1c4214-c415-4a35-ab9e-11506f611828",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "OVX8eS7SZ6koYGGB",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{\n(() => {\n  // 1. Get Fields\n  // Get data from Upload Image to imgBB node (web app trigger)\nconst uploadedData = $(\"Upload Image to imgBB\").first().json;\n  const getField = (name) => {\n    // Map web app field names to their values\n    const fieldMap = {\n      'Product Name': uploadedData.product_name || '',\n      'Niche': uploadedData.niche || '',\n      'Country': uploadedData.country || '',\n      'Language': uploadedData.language || '',\n      'Amazon Link': uploadedData.amazon_link || '',\n      'Competitors Link #1': uploadedData.competitors_link_1 || '',\n      'Competitors Link #2': uploadedData.competitors_link_2 || ''\n    };\n    return fieldMap[name] || '';\n  };\n\n  const productName = getField('Product Name') || \"Anti Cellulite Device\";\n  const niche = getField('Niche') || \"Beauty Tools\";\n  const country = getField('Country') || \"Global\";\n  const language = getField('Language') || \"English\";\n   \n  // Get links - prioritize Amazon\n  const amazonLink = getField('Amazon Link');\n  const comp1 = getField('Competitors Link #1');\n  const comp2 = getField('Competitors Link #2');\n\n  return `Your mission is to analyze a product and its market to extract the core elements needed to generate high-converting ad creatives. You are analyzing Dropshipping/White-Label products and must provide the best possible analysis even if the product is unbranded. CRITICAL: DO NOT include any product prices or discount percentages in your output. Focus on EVERGREEN marketing angles only - no seasonal events (Black Friday, Christmas, etc.).\n\nPerform a deep strategic analysis of this product for a Meta Ads campaign.\n\n=== INPUT CONTEXT ===\nProduct Name: ${productName}\nNiche: ${niche}\nTarget Country: ${country}\nLanguage: ${language}\n\n=== LINKS TO ANALYZE ===\nPrimary (Amazon): ${amazonLink}\nCompetitor 1: ${comp1}\nCompetitor 2: ${comp2}\n\n=== SEARCH STRATEGY (CRITICAL) ===\n1. **Search the URL:** Attempt to search specifically for the Amazon URL provided to identify the exact model/ASIN.\n2. **Search the Features:** If the name is generic (e.g., \"12 Mode Massager\"), search for the technical product category name.\n3. **Visual Match:** Look for the typical physical design of this product type.\n\n=== FALLBACK RULE ===\n**If you cannot find the specific brand/model from the link:**\nYou MUST assume this is a standard \"White Label\" device in the ${niche} category. Analyze the **market standard** for this device type. **DO NOT REFUSE THE TASK.** Generate the analysis based on the most common top-selling model with similar features.\n\n=== OUTPUT FORMAT (STRICT) ===\nReturn ONLY this structure:\n\n=== PRODUCT_ANALYSIS ===\n[3 sentences in ${language} explaining the core mechanism and primary benefit.]\n\n=== COMPETITIVE_EDGE ===\n[List 2-3 unique selling points (USPs) in ${language} that differentiate this product from Competitor 1 and 2. If competitors are not provided, compare to the general market standard.]\n\n=== EMOTIONAL_TRANSFORMATION ===\n**Before State:** [1-2 sentences in ${language} describing the customer's frustration/problem state before the product.]\n**After State:** [1-2 sentences in ${language} describing the customer's positive feeling/identity after using the product.]\n\n=== VISUAL_ANCHOR ===\n[A physical description in ENGLISH. Describe the standard design for this device type.]\n\n=== TARGET_AVATAR_VISUAL ===\n**Ethnicity/Skin Tone:** [In ENGLISH. Based on the target country and niche, describe the typical customer's appearance for visual consistency. E.g., \"South Asian woman with medium-brown skin tone\" or \"Caucasian man with fair skin\"]\n\n=== VISUAL_DIRECTION ===\n**Lifestyle Context:** [In ENGLISH. Describe a scene showing the product in use. Who is using it (based on typical ${niche} buyer)? Where are they? What is the mood?]\n**Color Psychology:** [In ENGLISH. Recommend 2-3 primary colors for the ad creative that evoke the desired emotion for ${niche} products.]\n**Composition Style:** [In ENGLISH. Recommend ONE visual style: \"Minimalist product focus\", \"UGC-style lifestyle\", \"Before/After comparison\", or \"Split-screen comparison\".]\n\n=== PAIN_POINTS ===\n1. [Top pain point in ${language}]\n2. [Second pain point in ${language}]\n3. [Third pain point in ${language}]\n\n=== SOCIAL_PROOF_ANGLES ===\n[Extract 2-3 distinct review themes or credibility markers from the Amazon link and competitor links in ${language}. e.g., \"Praised for ease of use\", \"Customers love the results after 2 weeks\".]\n\n=== HOOK_VARIATIONS ===\n1. **[Problem-Agitate]:** [Hook in ${language} \u2014 Start with the #1 pain point and intensify it.]\n2. **[Curiosity]:** [Hook in ${language} \u2014 Ask a provocative question or make a bold claim.]\n3. **[Social Proof]:** [Hook in ${language} \u2014 Lead with a review angle or \"thousands of customers\" framing.]\n4. **[Benefit-First]:** [Hook in ${language} \u2014 State the main transformation/benefit directly.]\n5. **[Urgency]:** [Hook in ${language} \u2014 Create FOMO with evergreen scarcity language (e.g., \"Limited stock available\").]`;\n})()\n}}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1440,
+        576
+      ],
+      "id": "fad6337a-985e-4f00-b1e6-6b64393c0b82",
+      "name": "HTTP Request - AI Research"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.kie.ai/api/v1/jobs/createTask",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer d9766561db157236cc9151bb08020768"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "nano-banana-pro"
+            },
+            {
+              "name": "input",
+              "value": "={{\n{\n  \"prompt\": `CREATE A META ADS BANNER FOR PAID ADVERTISING:\n\n# CRITICAL RULES (MUST FOLLOW)\n\n## RULE 1: PRODUCT IMAGE PRESERVATION (MOST IMPORTANT)\n- The attached product image must appear EXACTLY as provided - DO NOT modify it in any way\n- DO NOT change the product's colors, packaging design, labels, text, or branding\n- DO NOT redesign, recolor, or alter the product packaging\n- DO NOT generate a new version of the product - use the EXACT attached image\n- The product should look like it was photographed and placed into the scene, not regenerated\n- Treat the product image as a \"sacred\" element that cannot be changed\n\n## RULE 2: SCENE COMPOSITION\n- You may create a lifestyle background/setting around the product\n- You may add hands holding the product (but the product itself stays unchanged)\n- You may adjust lighting on the scene, but the product's appearance stays true to the original\n- The product can be resized or repositioned, but its visual design must remain identical\n\n## RULE 2.5: PRODUCT ONLY (NO ACCESSORIES)\n- Show ONLY the main product unit - DO NOT add any accessories\n- DO NOT add charging cables, USB cords, power adapters, or chargers\n- DO NOT add product boxes, packaging, or carrying cases\n- DO NOT add instruction manuals, warranty cards, or any paper materials\n- The product should appear as if it's being used, not as if it's being unboxed\n\n## RULE 2.6: SKIN TONE CONSISTENCY\n- If the visual shows a person (before/after, using the product), the person's skin tone and ethnicity MUST remain IDENTICAL\n- DO NOT change a person's skin color, ethnicity, or appearance between different states\n- If showing transformation results (e.g., clearer skin), only the skin CONDITION changes, not the skin TONE\n\n## RULE 2.7: NO PRICES OR DISCOUNTS\n- DO NOT include any prices, dollar amounts, or percentage discounts in the image\n- DO NOT add text like \"$XX.99\", \"50% OFF\", \"SALE\", or any price-related messaging\n- The headline and body text provided are the ONLY text that should appear\n\n## RULE 3: TEXT OVERLAY\n- Add text directly to the banner WITHOUT any labels like \"HEADLINE:\" or \"BODY COPY:\"\n- The text should appear as final ad copy, not as a template\n- Use the text EXACTLY as provided - do not modify, translate, or rewrite\n\n## RULE 4: SAFE ZONES FOR ${$json.aspect_ratio === \"9:16\" ? \"INSTAGRAM STORIES/REELS (9:16)\" : \"INSTAGRAM FEED (1:1)\"}\n${$json.aspect_ratio === \"9:16\" ? `\nFor 9:16 vertical format (1080x1920px):\n- TOP SAFE ZONE: Keep text BELOW the top 250 pixels (reserved for Instagram UI)\n- BOTTOM SAFE ZONE: Keep ALL text and important elements ABOVE the bottom 320 pixels (reserved for CTA button overlay)\n- EFFECTIVE TEXT AREA: Place all text between 250px from top and 320px from bottom\n- Place HEADLINE in the upper-middle area (around 300-600px from top)\n- Place BODY COPY in the middle area (around 600-1200px from top)\n- DO NOT place any text in the bottom 320 pixels - this area will be covered by Instagram's native CTA button\n` : `\nFor 1:1 square format (1080x1080px):\n- Keep text within the central 900x900px area\n- Leave 90px padding on all sides\n- Place headline in upper third\n- Place body copy in middle section\n- Place CTA button in lower third (but above bottom 90px padding)\n`}\n\n## RULE 5: CTA BUTTON\n${$json.aspect_ratio === \"9:16\" ? `\n- DO NOT add a CTA button - Instagram will overlay its own CTA button on Stories/Reels ads\n` : `\n- ADD a visible CTA button\n- Button text: ${$json.cta_text}\n- Button style: Rounded corners, contrasting background color, white or dark text, subtle drop shadow\n- Make the button look clickable and professional\n- Place the button in the lower third of the image, centered horizontally\n`}\n\n# VISUAL SCENE\n${$json.visual_scene}\n\n# TEXT TO ADD (Add these directly without labels)\nMain headline: ${$json.headline}\nSupporting text: ${$json.body}\n${$json.aspect_ratio === \"1:1\" ? `CTA button text: ${$json.cta_text}` : ``}\n\n# STYLE REQUIREMENTS\n- HEADLINE: Bold, high-contrast, easy to read at small sizes. Sans-serif font.\n- BODY TEXT: Smaller than headline, clean and legible.\n- Text direction: ${$json.language === \"Hebrew\" || $json.language === \"Arabic\" ? \"Right-to-Left (RTL)\" : \"Left-to-Right (LTR)\"}\n${$json.language === \"Hebrew\" || $json.language === \"Arabic\" ? \"- Ensure proper Hebrew/Arabic Unicode character rendering\" : \"\"}\n\n# OUTPUT\n- Aspect ratio: ${$json.aspect_ratio}\n- Photo-realistic quality\n- The final image should look like a professional paid social ad\n- The product must be visually IDENTICAL to the attached image`,\n\n  \"image_input\": [\n    $(\"Get a task\").first().json.custom_fields[11].value[0].url_w_host\n  ],\n  \"aspect_ratio\": $json.aspect_ratio,\n  \"resolution\": \"1K\",\n  \"output_format\": \"png\"\n}\n}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        912,
+        1216
+      ],
+      "id": "adede54d-6ff2-4822-af16-a32e70d30404",
+      "name": "KIE.ai - Submit Task"
+    },
+    {
+      "parameters": {
+        "amount": 15,
+        "unit": "seconds"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        1216
+      ],
+      "id": "4ea69d98-25a1-4df3-885a-ed16362a7131",
+      "name": "Wait 10s",
+      "webhookId": "4c81efd3-5f16-499a-ab2b-1fe0ae5c5a02"
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://api.kie.ai/api/v1/jobs/recordInfo?taskId=' + $('KIE.ai - Submit Task').item.json.data.taskId }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer d9766561db157236cc9151bb08020768"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1360,
+        1152
+      ],
+      "id": "2de79453-bac3-40ed-b0f3-0daaa4c17419",
+      "name": "Check Status"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "52c6f85c-f7ab-4b8a-8284-60c3a91f67fb",
+              "leftValue": "={{ $json.data.state }}",
+              "rightValue": "success",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1584,
+        1216
+      ],
+      "id": "08cf34ee-578b-476f-a717-98df272c1914",
+      "name": "Is Success?"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all items from the previous node\nconst items = $input.all();\n\n// Extract all image URLs from the successful KIE.ai responses\nconst imageUrls = items.map(item => {\n  const resultData = JSON.parse(item.json.data.resultJson);\n  return resultData.resultUrls[0];\n});\n\n// Return each URL as a separate item for downloading\nreturn items.map(item => {\n  const resultData = JSON.parse(item.json.data.resultJson);\n  return {\n    json: {\n      imageUrl: resultData.resultUrls[0]\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1824,
+        1232
+      ],
+      "id": "eec1b05d-7605-4879-ae44-5085eed732ea",
+      "name": "Get Image URL"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.imageUrl }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        912,
+        1456
+      ],
+      "id": "9cdf70ce-5bf5-4046-993e-6da441573fcd",
+      "name": "Download File"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.clickup.com/api/v2/task/{{ $('Get a task').first().json.id }}/attachment",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "clickUpApi",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "attachment",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1136,
+        1456
+      ],
+      "id": "54e78f42-161c-477b-acf1-09c5a88373f9",
+      "name": "Upload banner to clickup1",
+      "credentials": {
+        "clickUpApi": {
+          "id": "cRXde0yteyWiEe3c",
+          "name": "ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ccbf1e03-2ef5-410a-8e81-03f8b1355393",
+        "options": {},
+        "responseMode": "responseNode"
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        576
+      ],
+      "id": "78e84c09-96aa-4278-9643-be0961bbd1e4",
+      "name": "Webhook Trigger",
+      "webhookId": "ccbf1e03-2ef5-410a-8e81-03f8b1355393"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Simple test - just pass through data without calling imgBB\nconst body = $input.first().json.body;\n\nreturn {\n  json: {\n    product_image_url: \"https://via.placeholder.com/500\",\n    product_name: body.product_name || \"Test Product\",\n    niche: body.niche || \"Test\",\n    country: body.country || \"US\",\n    language: body.language || \"English\",\n    amazon_link: body.amazon_link || \"\",\n    competitors_link_1: body.competitors_link_1 || \"\"\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        576
+      ],
+      "id": "a1b2c3d4-5e6f-7890-abcd-ef1234567890",
+      "name": "Upload Image to imgBB"
+    },
+    {
+      "id": "81bde653-e3e9-4db1-a094-6f87c6da14ad",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1132,
+        1456
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Upload Image to imgBB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Image to imgBB": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request - AI Research",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request - AI Research": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "Creative Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Creative Summary": {
+      "main": [
+        [
+          {
+            "node": "Splitter Concepts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Splitter Concepts": {
+      "main": [
+        [
+          {
+            "node": "KIE.ai - Submit Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "KIE.ai - Submit Task": {
+      "main": [
+        [
+          {
+            "node": "Wait 10s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 10s": {
+      "main": [
+        [
+          {
+            "node": "Check Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Status": {
+      "main": [
+        [
+          {
+            "node": "Is Success?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Success?": {
+      "main": [
+        [
+          {
+            "node": "Get Image URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 10s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image URL": {
+      "main": [
+        [
+          {
+            "node": "Download File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Creative Summary",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "HTTP Request - AI Research",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:ClickUp Trigger": {}
+  }
+}
