@@ -12,12 +12,13 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
 export default function ToolPage() {
-  const params = useParams();
+  const params = useParams<{ id: string }>();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<WebhookResponse | null>(null);
 
-  const tool = toolsConfig.tools.find((t: Tool) => t.id === params.id) as Tool | undefined;
+  const toolId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const tool = toolsConfig.tools.find((t: Tool) => t.id === toolId) as Tool | undefined;
 
   if (!tool) {
     return (
