@@ -187,7 +187,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "={{\n(() => {\n  // 1. Get Fields\n  const fields = $(\"Get a task\").first().json.custom_fields || [];\n  const getField = (name) => {\n    const field = fields.find(f => f.name === name);\n    return field ? field.value : '';\n  };\n\n  const productName = getField('Product Name') || \"Anti Cellulite Device\";\n  const niche = getField('Niche') || \"Beauty Tools\";\n  const country = getField('Country') || \"Global\";\n  const language = getField('Language') || \"English\";\n   \n  // Get links - prioritize Amazon\n  const amazonLink = getField('Amazon Link');\n  const comp1 = getField('Competitors Link #1');\n  const comp2 = getField('Competitors Link #2');\n\n  return `Your mission is to analyze a product and its market to extract the core elements needed to generate high-converting ad creatives. You are analyzing Dropshipping/White-Label products and must provide the best possible analysis even if the product is unbranded. CRITICAL: DO NOT include any product prices or discount percentages in your output. Focus on EVERGREEN marketing angles only - no seasonal events (Black Friday, Christmas, etc.).\n\nPerform a deep strategic analysis of this product for a Meta Ads campaign.\n\n=== INPUT CONTEXT ===\nProduct Name: ${productName}\nNiche: ${niche}\nTarget Country: ${country}\nLanguage: ${language}\n\n=== LINKS TO ANALYZE ===\nPrimary (Amazon): ${amazonLink}\nCompetitor 1: ${comp1}\nCompetitor 2: ${comp2}\n\n=== SEARCH STRATEGY (CRITICAL) ===\n1. **Search the URL:** Attempt to search specifically for the Amazon URL provided to identify the exact model/ASIN.\n2. **Search the Features:** If the name is generic (e.g., \"12 Mode Massager\"), search for the technical product category name.\n3. **Visual Match:** Look for the typical physical design of this product type.\n\n=== FALLBACK RULE ===\n**If you cannot find the specific brand/model from the link:**\nYou MUST assume this is a standard \"White Label\" device in the ${niche} category. Analyze the **market standard** for this device type. **DO NOT REFUSE THE TASK.** Generate the analysis based on the most common top-selling model with similar features.\n\n=== OUTPUT FORMAT (STRICT) ===\nReturn ONLY this structure:\n\n=== PRODUCT_ANALYSIS ===\n[3 sentences in ${language} explaining the core mechanism and primary benefit.]\n\n=== COMPETITIVE_EDGE ===\n[List 2-3 unique selling points (USPs) in ${language} that differentiate this product from Competitor 1 and 2. If competitors are not provided, compare to the general market standard.]\n\n=== EMOTIONAL_TRANSFORMATION ===\n**Before State:** [1-2 sentences in ${language} describing the customer's frustration/problem state before the product.]\n**After State:** [1-2 sentences in ${language} describing the customer's positive feeling/identity after using the product.]\n\n=== VISUAL_ANCHOR ===\n[A physical description in ENGLISH. Describe the standard design for this device type.]\n\n=== TARGET_AVATAR_VISUAL ===\n**Ethnicity/Skin Tone:** [In ENGLISH. Based on the target country and niche, describe the typical customer's appearance for visual consistency. E.g., \"South Asian woman with medium-brown skin tone\" or \"Caucasian man with fair skin\"]\n\n=== VISUAL_DIRECTION ===\n**Lifestyle Context:** [In ENGLISH. Describe a scene showing the product in use. Who is using it (based on typical ${niche} buyer)? Where are they? What is the mood?]\n**Color Psychology:** [In ENGLISH. Recommend 2-3 primary colors for the ad creative that evoke the desired emotion for ${niche} products.]\n**Composition Style:** [In ENGLISH. Recommend ONE visual style: \"Minimalist product focus\", \"UGC-style lifestyle\", \"Before/After comparison\", or \"Split-screen comparison\".]\n\n=== PAIN_POINTS ===\n1. [Top pain point in ${language}]\n2. [Second pain point in ${language}]\n3. [Third pain point in ${language}]\n\n=== SOCIAL_PROOF_ANGLES ===\n[Extract 2-3 distinct review themes or credibility markers from the Amazon link and competitor links in ${language}. e.g., \"Praised for ease of use\", \"Customers love the results after 2 weeks\".]\n\n=== HOOK_VARIATIONS ===\n1. **[Problem-Agitate]:** [Hook in ${language} \u2014 Start with the #1 pain point and intensify it.]\n2. **[Curiosity]:** [Hook in ${language} \u2014 Ask a provocative question or make a bold claim.]\n3. **[Social Proof]:** [Hook in ${language} \u2014 Lead with a review angle or \"thousands of customers\" framing.]\n4. **[Benefit-First]:** [Hook in ${language} \u2014 State the main transformation/benefit directly.]\n5. **[Urgency]:** [Hook in ${language} \u2014 Create FOMO with evergreen scarcity language (e.g., \"Limited stock available\").]`;\n})()\n}}",
+        "text": "={{\n(() => {\n  // 1. Get Fields\n  const inputData = $(\"Upload Image to imgBB\").first().json;\n  \n  const productName = inputData.product_name || \"Anti Cellulite Device\";\n  const niche = inputData.niche || \"Beauty Tools\";\n  const country = inputData.country || \"Global\";\n  const language = inputData.language || \"English\";\n   \n  // Get links - prioritize Amazon\n  const amazonLink = inputData.amazon_link || '';\n  const comp1 = inputData.competitors_link_1 || '';\n  const comp2 = '';\n\n  return `Your mission is to analyze a product and its market to extract the core elements needed to generate high-converting ad creatives. You are analyzing Dropshipping/White-Label products and must provide the best possible analysis even if the product is unbranded. CRITICAL: DO NOT include any product prices or discount percentages in your output. Focus on EVERGREEN marketing angles only - no seasonal events (Black Friday, Christmas, etc.).\n\nPerform a deep strategic analysis of this product for a Meta Ads campaign.\n\n=== INPUT CONTEXT ===\nProduct Name: ${productName}\nNiche: ${niche}\nTarget Country: ${country}\nLanguage: ${language}\n\n=== LINKS TO ANALYZE ===\nPrimary (Amazon): ${amazonLink}\nCompetitor 1: ${comp1}\nCompetitor 2: ${comp2}\n\n=== SEARCH STRATEGY (CRITICAL) ===\n1. **Search the URL:** Attempt to search specifically for the Amazon URL provided to identify the exact model/ASIN.\n2. **Search the Features:** If the name is generic (e.g., \"12 Mode Massager\"), search for the technical product category name.\n3. **Visual Match:** Look for the typical physical design of this product type.\n\n=== FALLBACK RULE ===\n**If you cannot find the specific brand/model from the link:**\nYou MUST assume this is a standard \"White Label\" device in the ${niche} category. Analyze the **market standard** for this device type. **DO NOT REFUSE THE TASK.** Generate the analysis based on the most common top-selling model with similar features.\n\n=== OUTPUT FORMAT (STRICT) ===\nReturn ONLY this structure:\n\n=== PRODUCT_ANALYSIS ===\n[3 sentences in ${language} explaining the core mechanism and primary benefit.]\n\n=== COMPETITIVE_EDGE ===\n[List 2-3 unique selling points (USPs) in ${language} that differentiate this product from Competitor 1 and 2. If competitors are not provided, compare to the general market standard.]\n\n=== EMOTIONAL_TRANSFORMATION ===\n**Before State:** [1-2 sentences in ${language} describing the customer's frustration/problem state before the product.]\n**After State:** [1-2 sentences in ${language} describing the customer's positive feeling/identity after using the product.]\n\n=== VISUAL_ANCHOR ===\n[A physical description in ENGLISH. Describe the standard design for this device type.]\n\n=== TARGET_AVATAR_VISUAL ===\n**Ethnicity/Skin Tone:** [In ENGLISH. Based on the target country and niche, describe the typical customer's appearance for visual consistency. E.g., \"South Asian woman with medium-brown skin tone\" or \"Caucasian man with fair skin\"]\n\n=== VISUAL_DIRECTION ===\n**Lifestyle Context:** [In ENGLISH. Describe a scene showing the product in use. Who is using it (based on typical ${niche} buyer)? Where are they? What is the mood?]\n**Color Psychology:** [In ENGLISH. Recommend 2-3 primary colors for the ad creative that evoke the desired emotion for ${niche} products.]\n**Composition Style:** [In ENGLISH. Recommend ONE visual style: \"Minimalist product focus\", \"UGC-style lifestyle\", \"Before/After comparison\", or \"Split-screen comparison\".]\n\n=== PAIN_POINTS ===\n1. [Top pain point in ${language}]\n2. [Second pain point in ${language}]\n3. [Third pain point in ${language}]\n\n=== SOCIAL_PROOF_ANGLES ===\n[Extract 2-3 distinct review themes or credibility markers from the Amazon link and competitor links in ${language}. e.g., \"Praised for ease of use\", \"Customers love the results after 2 weeks\".]\n\n=== HOOK_VARIATIONS ===\n1. **[Problem-Agitate]:** [Hook in ${language} \u2014 Start with the #1 pain point and intensify it.]\n2. **[Curiosity]:** [Hook in ${language} \u2014 Ask a provocative question or make a bold claim.]\n3. **[Social Proof]:** [Hook in ${language} \u2014 Lead with a review angle or \"thousands of customers\" framing.]\n4. **[Benefit-First]:** [Hook in ${language} \u2014 State the main transformation/benefit directly.]\n5. **[Urgency]:** [Hook in ${language} \u2014 Create FOMO with evergreen scarcity language (e.g., \"Limited stock available\").]`;\n})()\n}}",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -225,7 +225,7 @@
             },
             {
               "name": "input",
-              "value": "={{\n{\n  \"prompt\": `CREATE A META ADS BANNER FOR PAID ADVERTISING:\n\n# CRITICAL RULES (MUST FOLLOW)\n\n## RULE 1: PRODUCT IMAGE PRESERVATION (MOST IMPORTANT)\n- The attached product image must appear EXACTLY as provided - DO NOT modify it in any way\n- DO NOT change the product's colors, packaging design, labels, text, or branding\n- DO NOT redesign, recolor, or alter the product packaging\n- DO NOT generate a new version of the product - use the EXACT attached image\n- The product should look like it was photographed and placed into the scene, not regenerated\n- Treat the product image as a \"sacred\" element that cannot be changed\n\n## RULE 2: SCENE COMPOSITION\n- You may create a lifestyle background/setting around the product\n- You may add hands holding the product (but the product itself stays unchanged)\n- You may adjust lighting on the scene, but the product's appearance stays true to the original\n- The product can be resized or repositioned, but its visual design must remain identical\n\n## RULE 2.5: PRODUCT ONLY (NO ACCESSORIES)\n- Show ONLY the main product unit - DO NOT add any accessories\n- DO NOT add charging cables, USB cords, power adapters, or chargers\n- DO NOT add product boxes, packaging, or carrying cases\n- DO NOT add instruction manuals, warranty cards, or any paper materials\n- The product should appear as if it's being used, not as if it's being unboxed\n\n## RULE 2.6: SKIN TONE CONSISTENCY\n- If the visual shows a person (before/after, using the product), the person's skin tone and ethnicity MUST remain IDENTICAL\n- DO NOT change a person's skin color, ethnicity, or appearance between different states\n- If showing transformation results (e.g., clearer skin), only the skin CONDITION changes, not the skin TONE\n\n## RULE 2.7: NO PRICES OR DISCOUNTS\n- DO NOT include any prices, dollar amounts, or percentage discounts in the image\n- DO NOT add text like \"$XX.99\", \"50% OFF\", \"SALE\", or any price-related messaging\n- The headline and body text provided are the ONLY text that should appear\n\n## RULE 3: TEXT OVERLAY\n- Add text directly to the banner WITHOUT any labels like \"HEADLINE:\" or \"BODY COPY:\"\n- The text should appear as final ad copy, not as a template\n- Use the text EXACTLY as provided - do not modify, translate, or rewrite\n\n## RULE 4: SAFE ZONES FOR ${$json.aspect_ratio === \"9:16\" ? \"INSTAGRAM STORIES/REELS (9:16)\" : \"INSTAGRAM FEED (1:1)\"}\n${$json.aspect_ratio === \"9:16\" ? `\nFor 9:16 vertical format (1080x1920px):\n- TOP SAFE ZONE: Keep text BELOW the top 250 pixels (reserved for Instagram UI)\n- BOTTOM SAFE ZONE: Keep ALL text and important elements ABOVE the bottom 320 pixels (reserved for CTA button overlay)\n- EFFECTIVE TEXT AREA: Place all text between 250px from top and 320px from bottom\n- Place HEADLINE in the upper-middle area (around 300-600px from top)\n- Place BODY COPY in the middle area (around 600-1200px from top)\n- DO NOT place any text in the bottom 320 pixels - this area will be covered by Instagram's native CTA button\n` : `\nFor 1:1 square format (1080x1080px):\n- Keep text within the central 900x900px area\n- Leave 90px padding on all sides\n- Place headline in upper third\n- Place body copy in middle section\n- Place CTA button in lower third (but above bottom 90px padding)\n`}\n\n## RULE 5: CTA BUTTON\n${$json.aspect_ratio === \"9:16\" ? `\n- DO NOT add a CTA button - Instagram will overlay its own CTA button on Stories/Reels ads\n` : `\n- ADD a visible CTA button\n- Button text: ${$json.cta_text}\n- Button style: Rounded corners, contrasting background color, white or dark text, subtle drop shadow\n- Make the button look clickable and professional\n- Place the button in the lower third of the image, centered horizontally\n`}\n\n# VISUAL SCENE\n${$json.visual_scene}\n\n# TEXT TO ADD (Add these directly without labels)\nMain headline: ${$json.headline}\nSupporting text: ${$json.body}\n${$json.aspect_ratio === \"1:1\" ? `CTA button text: ${$json.cta_text}` : ``}\n\n# STYLE REQUIREMENTS\n- HEADLINE: Bold, high-contrast, easy to read at small sizes. Sans-serif font.\n- BODY TEXT: Smaller than headline, clean and legible.\n- Text direction: ${$json.language === \"Hebrew\" || $json.language === \"Arabic\" ? \"Right-to-Left (RTL)\" : \"Left-to-Right (LTR)\"}\n${$json.language === \"Hebrew\" || $json.language === \"Arabic\" ? \"- Ensure proper Hebrew/Arabic Unicode character rendering\" : \"\"}\n\n# OUTPUT\n- Aspect ratio: ${$json.aspect_ratio}\n- Photo-realistic quality\n- The final image should look like a professional paid social ad\n- The product must be visually IDENTICAL to the attached image`,\n\n  \"image_input\": [\n    $(\"Get a task\").first().json.custom_fields[11].value[0].url_w_host\n  ],\n  \"aspect_ratio\": $json.aspect_ratio,\n  \"resolution\": \"1K\",\n  \"output_format\": \"png\"\n}\n}}"
+              "value": "={{\n{\n  \"prompt\": `CREATE A META ADS BANNER FOR PAID ADVERTISING:\n\n# CRITICAL RULES (MUST FOLLOW)\n\n## RULE 1: PRODUCT IMAGE PRESERVATION (MOST IMPORTANT)\n- The attached product image must appear EXACTLY as provided - DO NOT modify it in any way\n- DO NOT change the product's colors, packaging design, labels, text, or branding\n- DO NOT redesign, recolor, or alter the product packaging\n- DO NOT generate a new version of the product - use the EXACT attached image\n- The product should look like it was photographed and placed into the scene, not regenerated\n- Treat the product image as a \"sacred\" element that cannot be changed\n\n## RULE 2: SCENE COMPOSITION\n- You may create a lifestyle background/setting around the product\n- You may add hands holding the product (but the product itself stays unchanged)\n- You may adjust lighting on the scene, but the product's appearance stays true to the original\n- The product can be resized or repositioned, but its visual design must remain identical\n\n## RULE 2.5: PRODUCT ONLY (NO ACCESSORIES)\n- Show ONLY the main product unit - DO NOT add any accessories\n- DO NOT add charging cables, USB cords, power adapters, or chargers\n- DO NOT add product boxes, packaging, or carrying cases\n- DO NOT add instruction manuals, warranty cards, or any paper materials\n- The product should appear as if it's being used, not as if it's being unboxed\n\n## RULE 2.6: SKIN TONE CONSISTENCY\n- If the visual shows a person (before/after, using the product), the person's skin tone and ethnicity MUST remain IDENTICAL\n- DO NOT change a person's skin color, ethnicity, or appearance between different states\n- If showing transformation results (e.g., clearer skin), only the skin CONDITION changes, not the skin TONE\n\n## RULE 2.7: NO PRICES OR DISCOUNTS\n- DO NOT include any prices, dollar amounts, or percentage discounts in the image\n- DO NOT add text like \"$XX.99\", \"50% OFF\", \"SALE\", or any price-related messaging\n- The headline and body text provided are the ONLY text that should appear\n\n## RULE 3: TEXT OVERLAY\n- Add text directly to the banner WITHOUT any labels like \"HEADLINE:\" or \"BODY COPY:\"\n- The text should appear as final ad copy, not as a template\n- Use the text EXACTLY as provided - do not modify, translate, or rewrite\n\n## RULE 4: SAFE ZONES FOR ${$json.aspect_ratio === \"9:16\" ? \"INSTAGRAM STORIES/REELS (9:16)\" : \"INSTAGRAM FEED (1:1)\"}\n${$json.aspect_ratio === \"9:16\" ? `\nFor 9:16 vertical format (1080x1920px):\n- TOP SAFE ZONE: Keep text BELOW the top 250 pixels (reserved for Instagram UI)\n- BOTTOM SAFE ZONE: Keep ALL text and important elements ABOVE the bottom 320 pixels (reserved for CTA button overlay)\n- EFFECTIVE TEXT AREA: Place all text between 250px from top and 320px from bottom\n- Place HEADLINE in the upper-middle area (around 300-600px from top)\n- Place BODY COPY in the middle area (around 600-1200px from top)\n- DO NOT place any text in the bottom 320 pixels - this area will be covered by Instagram's native CTA button\n` : `\nFor 1:1 square format (1080x1080px):\n- Keep text within the central 900x900px area\n- Leave 90px padding on all sides\n- Place headline in upper third\n- Place body copy in middle section\n- Place CTA button in lower third (but above bottom 90px padding)\n`}\n\n## RULE 5: CTA BUTTON\n${$json.aspect_ratio === \"9:16\" ? `\n- DO NOT add a CTA button - Instagram will overlay its own CTA button on Stories/Reels ads\n` : `\n- ADD a visible CTA button\n- Button text: ${$json.cta_text}\n- Button style: Rounded corners, contrasting background color, white or dark text, subtle drop shadow\n- Make the button look clickable and professional\n- Place the button in the lower third of the image, centered horizontally\n`}\n\n# VISUAL SCENE\n${$json.visual_scene}\n\n# TEXT TO ADD (Add these directly without labels)\nMain headline: ${$json.headline}\nSupporting text: ${$json.body}\n${$json.aspect_ratio === \"1:1\" ? `CTA button text: ${$json.cta_text}` : ``}\n\n# STYLE REQUIREMENTS\n- HEADLINE: Bold, high-contrast, easy to read at small sizes. Sans-serif font.\n- BODY TEXT: Smaller than headline, clean and legible.\n- Text direction: ${$json.language === \"Hebrew\" || $json.language === \"Arabic\" ? \"Right-to-Left (RTL)\" : \"Left-to-Right (LTR)\"}\n${$json.language === \"Hebrew\" || $json.language === \"Arabic\" ? \"- Ensure proper Hebrew/Arabic Unicode character rendering\" : \"\"}\n\n# OUTPUT\n- Aspect ratio: ${$json.aspect_ratio}\n- Photo-realistic quality\n- The final image should look like a professional paid social ad\n- The product must be visually IDENTICAL to the attached image`,\n\n  \"image_input\": [\n    $(\"Upload Image to imgBB\").first().json.product_image_url\n  ],\n  \"aspect_ratio\": $json.aspect_ratio,\n  \"resolution\": \"1K\",\n  \"output_format\": \"png\"\n}\n}}"
             }
           ]
         },
@@ -611,7 +611,18 @@
         ]
       ]
     },
-    "On form submission": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Upload Image to imgBB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Image to imgBB": {
       "main": [
         [
           {
@@ -621,134 +632,6 @@
           }
         ]
       ]
-    }
-  },
-  "connections": {
-    "Webhook Trigger": {
-      "main": [[{
-        "node": "Upload Image to imgBB",
-        "type": "main",
-        "index": 0
-      }]]
-    },
-    "Upload Image to imgBB": {
-      "main": [[{
-        "node": "HTTP Request - AI Research",
-        "type": "main",
-        "index": 0
-      }]]
-    },
-    "ClickUp - Post Comment with Research": {
-      "main": [[{
-        "node": "ClickUp - Update Status to Creative Production",
-        "type": "main",
-        "index": 0
-      }]]
-    },
-    "ClickUp - Update Status to Creative Production": {
-      "main": [[{
-        "node": "Get many tasks",
-        "type": "main",
-        "index": 0
-      }]]
-    },
-    "Get many tasks": {
-      "main": [[{
-        "node": "Splitter Concepts",
-        "type": "main",
-        "index": 0
-      }]]
-    },
-    "Code in JavaScript4": {
-      "main": [[{
-        "node": "Creative Summary",
-        "type": "main",
-        "index": 0
-      }]]
-    },
-    "Splitter Concepts": {
-      "main": [[{
-        "node": "KIE.ai - Submit Task",
-        "type": "main",
-        "index": 0
-      }]]
-    },
-    "Creative Summary": {
-      "main": [[{
-        "node": "ClickUp - Post Comment with Research",
-        "type": "main",
-        "index": 0
-      }]]
-    },
-    "HTTP Request - AI Research": {
-      "main": [[{
-        "node": "Code in JavaScript4",
-        "type": "main",
-        "index": 0
-      }]]
-    },
-    "KIE.ai - Submit Task": {
-      "main": [[{
-        "node": "Wait 10s",
-        "type": "main",
-        "index": 0
-      }]]
-    },
-    "Wait 10s": {
-      "main": [[{
-        "node": "Check Status",
-        "type": "main",
-        "index": 0
-      }]]
-    },
-    "Check Status": {
-      "main": [[{
-        "node": "Is Success?",
-        "type": "main",
-        "index": 0
-      }]]
-    },
-    "Is Success?": {
-      "main": [
-        [{
-          "node": "Get Image URL",
-          "type": "main",
-          "index": 0
-        }],
-        [{
-          "node": "Wait 10s",
-          "type": "main",
-          "index": 0
-        }]
-      ]
-    },
-    "Get Image URL": {
-      "main": [[{
-        "node": "Download File",
-        "type": "main",
-        "index": 0
-      }]]
-    },
-    "Download File": {
-      "main": [[{
-        "node": "Respond to Webhook",
-        "type": "main",
-        "index": 0
-      }]]
-    },
-    "OpenRouter Chat Model": {
-      "ai_languageModel": [[{
-        "node": "Creative Summary",
-        "type": "ai_languageModel",
-        "index": 0
-      }]]
-    },
-    "OpenRouter Chat Model1": {
-      "ai_languageModel": [[{
-        "node": "HTTP Request - AI Research",
-        "type": "ai_languageModel",
-        "index": 0
-      }]]
     }
   },
   "active": true,

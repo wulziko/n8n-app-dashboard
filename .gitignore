@@ -32,6 +32,7 @@ yarn-error.log*
 # env files (do not commit)
 .env
 .env*.local
+.env.n8n
 MCP_SETUP_GUIDE.md
 
 # vercel
