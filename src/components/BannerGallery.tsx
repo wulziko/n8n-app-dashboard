@@ -133,8 +133,9 @@ export function BannerGallery({ banners }: BannerGalleryProps) {
                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                       <Button
                         size="sm"
-                        variant="secondary"
+                        variant="outline"
                         onClick={() => handleDownload(banner, index)}
+                        className="bg-white/90 hover:bg-white"
                       >
                         <Download className="mr-2 h-4 w-4" />
                         Download
@@ -142,8 +143,9 @@ export function BannerGallery({ banners }: BannerGalleryProps) {
                       {banner.imageUrl && (
                         <Button
                           size="sm"
-                          variant="secondary"
+                          variant="outline"
                           onClick={() => window.open(banner.imageUrl, '_blank')}
+                          className="bg-white/90 hover:bg-white"
                         >
                           <ExternalLink className="h-4 w-4" />
                         </Button>
